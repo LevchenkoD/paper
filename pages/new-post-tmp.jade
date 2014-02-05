@@ -13,6 +13,9 @@ html
 				label
 					Title
 					input(type="text", name="title", required, value="#{title}")
+				label
+					post link
+					input(type="text", name="url", required, value="#{url}")
 				textarea#editorSlave(style="display: none;" name="body")
 					#{body}
 				div#editor(contenteditable)

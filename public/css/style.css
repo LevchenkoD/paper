@@ -2,6 +2,7 @@ body{
 	margin: 0;
 	padding: 0;
 	font-family:  monospace;
+	overflow-y: scroll;
 }
 
 li{
@@ -25,6 +26,20 @@ menu li{
 	margin-right: 25px;
 }
 
+a:link{
+	color: #464A52;
+	text-decoration: none;
+}
+
+a:link:hover{
+	color: #000;
+	text-decoration: underline;
+}
+
+a:link:active, a:visited{
+	color: #61656F;
+}
+
 .content{
 	width: 50%;
 	margin: 50px auto;
@@ -37,7 +52,58 @@ menu li{
 
 /* Post */
 
+._post {
+	margin-bottom: 50px;
+}
+
 ._post ._edit {
 	float: right;
 	font-size: 10pt;
+}
+
+._post_wrapper{
+	position: fixed;
+	top: 50px;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 999;
+	background: white;
+	opacity: 0;
+	-webkit-transform: scale(0.9) translateY(200px);
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+	-webkit-transition: 0.5s;
+}
+
+._post_wrapper.__o{
+	-webkit-transform: scale(1) translateY(0);	
+	opacity: 1;
+}
+
+._post_wrapper.__v{
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0);
+}
+
+._post_wrapper.__r{
+	-webkit-transform: scale(1) translateY(0) skewY(-20deg) rotateY(-40deg);
+	-webkit-transform-origin: left;
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+	opacity: 0.5;
+}
+
+._post_wrapper .content{
+	opacity: 0;
+	-webkit-transition: 0.5s;
+}
+
+._post_wrapper.__v .content{
+	opacity: 1;
+}
+
+.close{
+	position: fixed;
+	top: 50px;
+	right: 50px;
+	font: normal bold 14pt calibri;
+	cursor: pointer;
 }

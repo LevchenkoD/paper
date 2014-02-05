@@ -1,4 +1,5 @@
-var db = require('./db');
+var db = require('./db')
+	,	tmp = require('./tmp/tmp');
 
 var fnPublish = function(data, fn){
 	var link = data.url || '/'+ Math.round(Math.random() * 1000000)
@@ -64,34 +65,55 @@ exports.updatePost = function(req, res){
 		if(post){
 			post.title = data.title,
 			post.body = data.body,
-			post.tags = data.tags
+			post.tags = data.tags,
+			post.url = data.url
 			
 			post.save(function(err){
 				if(err) throw err;
 				
-				res.redirect(url + '/edit');
+				res.redirect(data.url + '/edit');
 			});
 		}
 		
 	});
 }
 
-exports.getPost = function(id, fn){
-	if(id.length){
-		if(Array.isArray(id)){
-			db.Post.find({'_id' : {$in: id}}, function(err, posts){
+exports.getPost = function(data, fn){
+	if(data.id.length){
+		if(Array.isArray(data.id)){
+			db.Post.find({'_id' : {$in: data.id}}, function(err, posts){
 				if(err) throw err;
 				
 				if(fn && typeof(fn) === 'function'){
-					fn(err, posts)
+					if(data.type === 'json'){
+						fn(err, posts)
+					} else {
+						var page = tmp.html.postPage;
+						var list = posts.map(function(i){
+							var modPage = page;
+							for(key in i){
+								modPage = modPage.replace('_'+key+'_', i[key]);
+							}
+							return modPage;
+						});
+						fn(err, list);
+					}
 				}
 			});
 		} else {
-			db.Post.findOne({'_id': id}, function(err, post){
+			db.Post.findOne({'_id': data.id}, function(err, post){
 				if(err) throw err;
 				
 				if(fn && typeof(fn) === 'function'){
-					fn(err, post);
+					if(data.type === 'json'){
+						fn(err, post)
+					} else {
+						var page = tmp.html.postPage;
+						for(key in post){
+							page = page.replace('_'+key+'_', post[key]);
+						}
+						fn(err, page);
+					}
 				}
 			})
 		}
@@ -107,7 +129,9 @@ exports.latest = function(req, res){
 		var list = '';
 		
 		for(var i=0; i< posts.length; i++){
-			list += '<div class="_post"><h2 class="_title"><a href="'+posts[i].url+'" data-post-id="'+posts[i]._id+'">'+posts[i].title+'</a><a href="'+posts[i].url+'/edit" class="_edit">edit</a></h2><p>' + posts[i].body + '</p></div>';
+			post = posts[i];
+			list += '<div class="_post"><h2 class="_title"><a href="'+post.url+'" data-post-id="'+post._id+'">'+post.title+'</a>'
+					+'<a href="'+post.url+'/edit" class="_edit">edit</a></h2><p>' + post.body + '</p></div>';
 		}
 		
 		res.render('../pages/index.jade', {list: list});

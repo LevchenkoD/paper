@@ -13,10 +13,10 @@ var Paper = (function(socket){
 	
 	var Post = (function(){
 	
-		function get(id, fn){
-			if(id.length){
+		function get(data, fn){
+			if(data.id.length){
 				
-				socket.emit('getPost', id, function(err, post){
+				socket.emit('getPost', data, function(err, post){
 					if(err) throw err;
 					
 					if(fn && typeof(fn) === 'function'){

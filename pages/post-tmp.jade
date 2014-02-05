@@ -5,10 +5,11 @@ html
 	body
 		include header
 		
-		#content.content
+		#content.content._post
 			form(action="#{url}/remove", method="post")
 				button remove
 			h1 !{title}
+				a._edit(href="#{url}/edit") edit
 			p !{body}
 			i !{tags}
 			

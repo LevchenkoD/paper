@@ -21,20 +21,20 @@ app.get('/login', routes.login);
 app.post('/login', user.auth);
 app.post('/logout', user.logout);
 app.get('/new-post', user.isAuth, routes.newPost);
-app.post('/publish-post', post.publish);
+app.post('/publish-post', user.isAuth, post.publish);
 app.get('/:post', routes.post);
 //app.get('/:post/edit', user.isAuth, routes.editPost);
-app.get('/:post/edit', routes.editPost);
-app.post('/:post/update', post.updatePost);
-app.post('/:post/remove', post.remove);
-app.get('/:user', routes.user);
+app.get('/:post/edit', user.isAuth, routes.editPost);
+app.post('/:post/update', user.isAuth, post.updatePost);
+app.post('/:post/remove', user.isAuth, post.remove);
+app.get('/user/:user', routes.user);
 
 app.get('*', function(req, res){
 	res.write('It\'s paper, bitch');
 	res.end();
 });
 
-db.Post.findOne({url: '/215432'}, function(err, post){ console.log(post)})
+//db.Post.findOne({url: '/215432'}, function(err, post){ console.log(post)})
 
 
 io.sockets.on('connection', function(socket){
