@@ -23,6 +23,10 @@ app.post('/logout', user.logout);
 app.get('/new-post', user.isAuth, routes.newPost);
 app.post('/publish-post', post.publish);
 app.get('/:post', routes.post);
+//app.get('/:post/edit', user.isAuth, routes.editPost);
+app.get('/:post/edit', routes.editPost);
+app.post('/:post/update', post.updatePost);
+app.post('/:post/remove', post.remove);
 app.get('/:user', routes.user);
 
 app.get('*', function(req, res){
@@ -30,7 +34,7 @@ app.get('*', function(req, res){
 	res.end();
 });
 
-//db.Post.findOne({url: 'Ima-link'}, function(err, post){ post.url = '/ima-link'; post.save()})
+db.Post.findOne({url: '/215432'}, function(err, post){ console.log(post)})
 
 
 io.sockets.on('connection', function(socket){

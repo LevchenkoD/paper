@@ -22,7 +22,26 @@ var fnPublish = function(data, fn){
 		});
 }
 
+var fnRemove = function(url, fn){
+	if(url){
+		db.Post.findOne({url: url}, function(err, post){
+			if(err) throw err;
+			
+			if(post){
+				post.remove(function(err){
+					if(err) throw err;
+					fn(err, true);
+				});
+			} else {
+				var e = new Error().message = "Post not found";
+				fn(e, false);
+			}
+		});
+	}
+};
+
 exports.fnPublish = fnPublish;
+exports.fnRemove = fnRemove;
 
 exports.publish = function(req, res){
 	var data = req.body;
@@ -34,6 +53,28 @@ exports.publish = function(req, res){
 		
 	}
 };
+
+exports.updatePost = function(req, res){
+	var url = '/' + req.params.post;
+	db.Post.findOne({url: url}, function(err, post){
+		if(err) throw err;
+		
+		var data = req.body;
+		
+		if(post){
+			post.title = data.title,
+			post.body = data.body,
+			post.tags = data.tags
+			
+			post.save(function(err){
+				if(err) throw err;
+				
+				res.redirect(url + '/edit');
+			});
+		}
+		
+	});
+}
 
 exports.getPost = function(id, fn){
 	if(id.length){
@@ -66,10 +107,22 @@ exports.latest = function(req, res){
 		var list = '';
 		
 		for(var i=0; i< posts.length; i++){
-			list += '<h2><a href="'+posts[i].url+'" data-post-id="'+posts[i]._id+'">'+posts[i].title+'</a></h2><p>' + posts[i].body + '</p>';
+			list += '<div class="_post"><h2 class="_title"><a href="'+posts[i].url+'" data-post-id="'+posts[i]._id+'">'+posts[i].title+'</a><a href="'+posts[i].url+'/edit" class="_edit">edit</a></h2><p>' + posts[i].body + '</p></div>';
 		}
 		
 		res.render('../pages/index.jade', {list: list});
 		
+	});
+}
+
+exports.remove = function(req, res){
+	var url = '/'+req.params.post;
+	
+	fnRemove(url, function(err, removed){
+		if(err) throw err;
+		
+		if(removed){
+			res.redirect('/');
+		}
 	});
 }

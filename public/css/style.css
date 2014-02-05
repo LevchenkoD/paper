@@ -34,3 +34,10 @@ menu li{
 	height: 300px;
 	border: solid 1px silver;
 }
+
+/* Post */
+
+._post ._edit {
+	float: right;
+	font-size: 10pt;
+}
