@@ -1,0 +1,20 @@
+doctype
+html
+	include head
+	body
+		include header
+		
+		#content.content
+			h1 New article
+			form(action="/publish-post", method="post")
+				label
+					Title
+					input(type="text", name="title", required)
+				div#editor(contenteditable)
+				label
+					tags
+					input(type="text",name="tags")
+				label
+					button Publish
+		
+		include js
