@@ -30,14 +30,31 @@ app.get('*', function(req, res){
 	res.end();
 });
 
+//db.Post.findOne({url: 'Ima-link'}, function(err, post){ post.url = '/ima-link'; post.save()})
+
 
 io.sockets.on('connection', function(socket){
 	
 	socket.on('publish', function(data, fn){
 		if(data){
-			fnPublish(data, function(link){
+			post.fnPublish(data, function(link){
 				fn(link);
 			});
+		}
+	});
+	
+	socket.on('getPost', function(id, fn){
+		if(id){
+			post.getPost(id, function(err, data){
+				if(fn && typeof(fn) === 'function'){
+					fn(err, data);
+				}
+			});
+		} else {
+			if(fn && typeof(fn) === 'function'){
+				var e  = new Error().message = "Enter post ID";
+				fn(e, null);
+			}
 		}
 	});
 	
