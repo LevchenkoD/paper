@@ -1,0 +1,29 @@
+doctype
+html
+	head
+		include head
+		title New Post
+	body
+		include header
+		#content.content
+			h1 New article
+			form(action="#{url}/remove", method="post")
+				button remove
+			form#new-post(name="newPost", action="#{action}", method="post")
+				label
+					Title
+					input(type="text", name="title", required, value="#{title}")
+				label
+					post link
+					input(type="text", name="url", required, value="#{url}")
+				textarea#editorSlave(style="display: none;" name="body")
+					#{body}
+				div#editor(contenteditable) !{body}
+				label
+					tags
+					input(type="text",name="tags", value="#{tags}")
+				label
+					button(title="Ctrl+Enter") Publish
+		
+		include js
+		script(src="/js/editor.js").

@@ -8,6 +8,7 @@ var	express = require('express')
 	,	db = require('./db')
 	,	user = require('./user')
 	,	post = require('./post')
+	,	jade = require('jade')
 	,	routes = require('./routes/routes');
 
 app.use(express.bodyParser());
@@ -17,6 +18,7 @@ app.use(express.session({secret: 'adgdgrr523rd/e/.fd,sfemowr'}));
 app.use(express.static(__dirname + '/public'));
 
 app.get('/', post.latest);
+app.get('/admin', routes.admin);
 app.get('/login', routes.login);
 app.post('/login', user.auth);
 app.post('/logout', user.logout);
@@ -28,14 +30,21 @@ app.get('/:post/edit', user.isAuth, routes.editPost);
 app.post('/:post/update', user.isAuth, post.updatePost);
 app.post('/:post/remove', user.isAuth, post.remove);
 app.get('/user/:user', routes.user);
-
 app.get('*', function(req, res){
 	res.write('It\'s paper, bitch');
 	res.end();
 });
 
-//db.Post.findOne({url: '/215432'}, function(err, post){ console.log(post)})
+db.Post.find().exec(function(err, post){ post.map(function(p){
+	p.thumbText = p.body.slice(0, 300);
+	p.save();
+	
+})})
 
+jade.renderFile('pages/tmp/post-preview.jade', {url: 'AZAZAZAZAZZAZZAZAZ'}, function (err, html) {
+  if (err) throw err;
+	//console.log(html);
+});
 
 io.sockets.on('connection', function(socket){
 	
@@ -60,6 +69,10 @@ io.sockets.on('connection', function(socket){
 				fn(e, null);
 			}
 		}
+	});
+	
+	socket.on('getPage', function(url, fn){
+		
 	});
 	
 });

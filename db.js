@@ -5,7 +5,7 @@ var mongoose = require('mongoose')
 
 mongoose.connect('mongodb://localhost/paper');
 	
-var User = mongoose.model('User', {
+exports.User = mongoose.model('User', {
 	firstName: String,
 	lastName: String,
 	mail: String,
@@ -13,10 +13,11 @@ var User = mongoose.model('User', {
 	login: String
 });
 
-var Post = mongoose.model('Post', {
+exports.Post = mongoose.model('Post', {
 	title: String,
 	url: String,
 	body: String,
+	thumbText: String,
 	tags: Array,
 	date: String,
 	author: Object,
@@ -24,7 +25,11 @@ var Post = mongoose.model('Post', {
 	stats: Object
 });
 
-exports.User = User;
-exports.Post = Post;
-
- 
+exports.Admin = mongoose.model('Admin', {
+	theme: {
+		name: String,
+		path: String
+	},
+	themes: Array,
+	stats: Object	
+});

@@ -1,5 +1,5 @@
 var db = require('./db')
-	,	tmp = require('./tmp/tmp');
+	,	jade = require('jade');
 
 var fnPublish = function(data, fn){
 	var link = data.url || '/'+ Math.round(Math.random() * 1000000)
@@ -79,24 +79,34 @@ exports.updatePost = function(req, res){
 }
 
 exports.getPost = function(data, fn){
+
 	if(data.id.length){
+	
 		if(Array.isArray(data.id)){
+		
 			db.Post.find({'_id' : {$in: data.id}}, function(err, posts){
 				if(err) throw err;
 				
 				if(fn && typeof(fn) === 'function'){
+				
 					if(data.type === 'json'){
-						fn(err, posts)
+					
+						fn(err, posts);
+						
 					} else {
+					
 						var page = tmp.html.postPage;
-						var list = posts.map(function(i){
-							var modPage = page;
-							for(key in i){
-								modPage = modPage.replace('_'+key+'_', i[key]);
-							}
-							return modPage;
+						var list = posts.map(function(post){
+							
+							jade.renderFile('pages/tmp/post-page.jade', post, function(err, html){
+								if(err) throw err;
+								return html;
+							});
+							
 						});
+						
 						fn(err, list);
+						
 					}
 				}
 			});
@@ -108,11 +118,13 @@ exports.getPost = function(data, fn){
 					if(data.type === 'json'){
 						fn(err, post)
 					} else {
-						var page = tmp.html.postPage;
-						for(key in post){
-							page = page.replace('_'+key+'_', post[key]);
-						}
-						fn(err, page);
+					
+						jade.renderFile('pages/tmp/post-page.jade', post, function(err, html){
+							if(err) throw err;
+							
+							fn(err, html);
+						});
+					
 					}
 				}
 			})
@@ -130,8 +142,10 @@ exports.latest = function(req, res){
 		
 		for(var i=0; i< posts.length; i++){
 			post = posts[i];
-			list += '<div class="_post"><h2 class="_title"><a href="'+post.url+'" data-post-id="'+post._id+'">'+post.title+'</a>'
-					+'<a href="'+post.url+'/edit" class="_edit">edit</a></h2><p>' + post.body + '</p></div>';
+			jade.renderFile('pages/tmp/post-thumbnail.jade', post, function(err, html){
+				if(err) throw err;
+				list += html;
+			});
 		}
 		
 		res.render('../pages/index.jade', {list: list});
